@@ -259,7 +259,7 @@ set splitright
 " バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
 set nobackup
 " ファイルのフォーマットの設定 (左から優先度順)
-" set fileformats=unix,dos,mac
+set fileformats=unix,dos,mac
 " スワップファイル作らなーい
 set noswf
 " アンドゥファイル作らなーい
