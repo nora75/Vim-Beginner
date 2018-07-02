@@ -1,28 +1,52 @@
 scriptencoding utf-8
 " こいつ↑は必ず一番上に
-" このファイルを開いた時このファイルのみで折り畳みが有効化されるので折り畳み関連のコマンド↓
+" このファイルでは折り畳みが有効化されているので折り畳み関連のコマンド↓
 " zR:折り畳みを全て開く
 " zM:折り畳みを全て閉じる
 " zo:カーソルの下の折り畳みを1レベル開く
 " zO:カーソルの下の折り畳みを全て開く
 " zO:カーソルの下の折り畳みを全て開く
 
+" 日本語版の設定ファイル(vimrc) for Vim 8.1 {{{1
 "
-" 日本語版の設定ファイル(vimrc) for Vim 8.1
-"
-" Last Change: 01-Jul-2018.
+" Last Change: 02-Jul-2018.
 " Maintainer:  NORA
 " Description: Provide many settings for vim beginner only support vim 8.1
 "
-" 解説:
+" 解説: {{{1
 " 各オプションの上部にコメントが書かれています
 " コメントには説明と、その後にその設定を無効化する、または(乂･д･´)反対!の動作をする設定が書かれています
 " このファイル内に個人的な設定を書かないで下さい(Ex:プラグインの設定等)
-" このファイル内とは異なる値を設定したい場合、このファイル読み込み後に各自で設定して下さい
-" また、エンコードの設定は危険なため、このファイルには入ってません、各自で設定して下さい、utf-8を推奨しているため、このファイルはutf-8で書かれています
+" このファイル内とは異なる値を設定したい場合、このファイル**読み込み後**に各自で設定して下さい
+" エンコードの設定は危険なため、このファイルには入ってません、各自で設定して下さい、また、このファイルはutf-8で書かれています
+" エンコードの設定の例:
+"---------------------------------------------------------------------------
+" ファイルのエンコーディングの設定(utf-8にする設定): {{{2
+
+"---------------------------------------------------------------------------
+" vim内部のエンコーディング: {{{3
+
+if &enc !=# 'utf-8'
+    set enc=utf-8
+endif
+
+"---------------------------------------------------------------------------
+" ファイル読み込み時のエンコーディング: {{{3
+
+if &fencs !=# 'ucs-bom,utf-8,sjis'
+    set fileencodings=ucs-bom,utf-8,sjis
+endif
+
+"---------------------------------------------------------------------------
+" ファイル書き出し時のエンコーディング: {{{3
+
+if &fenc !=# 'utf-8'
+    set fileencoding=utf-8
+endif
+
 " また、githubに上げているため、gitまたはプラグイン管理プラグイン等を利用する事をオススメします
 " 
-" 例:
+" 例: {{{2
 " 検索時に大文字小文字を無視 (noignorecase:無視しない)
 " set ignorecase
 "
@@ -30,10 +54,10 @@ scriptencoding utf-8
 " set noignorecase
 "
 " 参考:
+"   :help tutor
 "   :help vimrc
-"   :echo $HOME
-"   :echo $VIM
-"   :version
+"   :VIMTUTOR / :TUTORIAL
+"   :help index.html
 
 "---------------------------------------------------------------------------
 " これは必須 {{{1
@@ -52,16 +76,17 @@ if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
   let $PATH = $VIM . ';' . $PATH
 endif
 
-" vimproc: disable vimproc included with KaoriYa
-if kaoriya#switch#enabled('disable-vimproc')
-  let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]vimproc$"'), ',')
-endif
+if has('kaoriya')
+  " vimproc: disable vimproc included with KaoriYa
+  if kaoriya#switch#enabled('disable-vimproc')
+    let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]vimproc$"'), ',')
+  endif
 
-" go-extra: disable go-extra included with KaoriYa
-if kaoriya#switch#enabled('disable-go-extra')
-  let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]golang$"'), ',')
+  " go-extra: disable go-extra included with KaoriYa
+  if kaoriya#switch#enabled('disable-go-extra')
+    let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]golang$"'), ',')
+  endif
 endif
-
 
 " Disable Screen Mode (kaoriya)
 let g:plugin_scrnmode_disable = 'yes'
@@ -80,14 +105,18 @@ if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMRC')
   set tags=./tags,tags
 endif
 
-" autofmt: format function that support Japanese
-set formatexpr=autofmt#japanese#formatexpr()
+try
+  " autofmt: format function that support Japanese
+  set formatexpr=autofmt#japanese#formatexpr()
+catch
+endtry
 
 " correspond move slow when $display is set
 if !has('gui_running') && has('xterm_clipboard')
   set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
 
+" :Transform
 command! -nargs=* -range Transform <line1>,<line2>call Transform(<f-args>)
 function! Transform(from_str, to_str, ...)
   if a:0 | let string = a:1 | else | let string = getline(".") | endif
@@ -266,7 +295,6 @@ set noswf
 if has('persistent_undo')
   set noundofile
 endif
-
 
 "---------------------------------------------------------------------------
 " ファイル名に大文字小文字の区別がないシステム用の設定: {{{2
@@ -606,19 +634,18 @@ vnoremap <silent> <C-S-p> "0P
 
 nnoremap <silent> <F1>               :<C-u>source $MYVIMRC<CR>
 vnoremap <silent> <F1>               :<C-u>source $MYVIMRC<CR>
+
 "---------------------------------------------------------------------------
 " <F5>で現在のファイルの再読み込み: {{{3
 
-nnoremap <silent> <F5>               :<C-u>e!<CR>
-vnoremap <silent> <F5>               :<C-u>e!<CR>
+nnoremap <silent> <F5>               :<C-u>silent! e!<CR>
+vnoremap <silent> <F5>               :<C-u>silent! e!<CR>
 
 "---------------------------------------------------------------------------
-" <F12>で新しいタブで現在読み込んでる.vimrcの編集を開始する: {{{3
+" <F12>で.vimrcを新規タブで編集: {{{3
 
-nnoremap <silent> <F12>              :<C-u>tabe $MYVIMRC|silent! vs %:p:h\itimura<CR>
-vnoremap <silent> <F12>              :<C-u>tabe $MYVIMRC|silent! vs %:p:h\itimura<CR>
-
-"---------------------------------------------------------------------------
+nnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
+vnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
 
 "---------------------------------------------------------------------------
 " windowsだとC-xに元から切り取りだか何だか糞なマップがされてるのでアンマップ: {{3
@@ -705,62 +732,5 @@ endfunc
 " この関数呼び出しによってマッピングを行なっている
 
 call s:dontusethiskey()
-
-"---------------------------------------------------------------------------
-" その他: {{{1
-
-"---------------------------------------------------------------------------
-" s:randommapkey() abort: {{{3
-func! s:randommapkey() abort
-  nmapc 
-  vmapc 
-  imapc 
-  " 32～126,8,9,10,13 
-  for i in range(32,126) 
-    call s:map(s:pickup(),s:pickup()) 
-  endfor 
-  return 
-endfunc 
-
-"---------------------------------------------------------------------------
-" s:map(lh,rh) abort: {{{3
-func! s:map(lh,rh) abort
-  let cst = '<C-' 
-  let sst = '<S-' 
-  let en = '>' 
-  try 
-    for i in ['n','i','v'] 
-      exe i.'noremap' a:lh a:rh 
-      exe i.'noremap' cst.a:lh.en cst.a:rh.en 
-      exe i.'noremap' sst.a:lh.en sst.a:rh.en 
-    endfor 
-  catch 
-  endtry 
-  return 
-endfunc 
-
-"---------------------------------------------------------------------------
-" s:pickup() abort: {{{3
-func! s:pickup() abort
-  let ret = '' 
-  while ret ==# '' 
-    let ret = tolower(nr2char(s:randnum())) 
-  endwhile 
-  if ret ==# ' ' 
-    ret = '<Space>' 
-  endif 
-  return ret 
-endfunc 
-
-"---------------------------------------------------------------------------
-" s:randnum() abort: {{{3
-function! s:randnum() abort
-  return ( str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % 94 ) + 32 
-endfunction 
-
-"---------------------------------------------------------------------------
-" P.S.この↓行をアンコメントすると面白いよ 
-
-" call s:randommapkey()
 
 " vim: set fdm=marker fmr={{{,}}} fdl=1 ts=8 sts=2 sw=2 tw=0 ft=vim :}}}
