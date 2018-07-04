@@ -7,11 +7,13 @@ scriptencoding utf-8
 " zO:カーソルの下の折り畳みを全て開く
 " zO:カーソルの下の折り畳みを全て開く
 
+"===========================================================================
 " 日本語版の設定ファイル(vimrc) for Vim 8.1 {{{1
 "
-" Last Change: 02-Jul-2018.
-" Maintainer:  NORA
 " Description: Provide many settings for vim beginner only support vim 8.1
+" Last Change: 03-Jul-2018.
+" Maintainer:  NORA75
+" Licence: MIT
 "
 " 解説: {{{1
 " 各オプションの上部にコメントが書かれています
@@ -27,56 +29,56 @@ scriptencoding utf-8
 " vim内部のエンコーディング: {{{3
 
 if &enc !=# 'utf-8'
-    set enc=utf-8
+  set enc=utf-8
 endif
 
 "---------------------------------------------------------------------------
 " ファイル読み込み時のエンコーディング: {{{3
 
 if &fencs !=# 'ucs-bom,utf-8,sjis'
-    set fileencodings=ucs-bom,utf-8,sjis
+  set fileencodings=ucs-bom,utf-8,sjis
 endif
 
 "---------------------------------------------------------------------------
 " ファイル書き出し時のエンコーディング: {{{3
 
 if &fenc !=# 'utf-8'
-    set fileencoding=utf-8
+  set fileencoding=utf-8
 endif
 
 " また、githubに上げているため、gitまたはプラグイン管理プラグイン等を利用する事をオススメします
 " 
-" 例: {{{2
+" 設定例: {{{1
 " 検索時に大文字小文字を無視 (noignorecase:無視しない)
 " set ignorecase
-"
-" 上記のように書かれている場合、以下のように変更をする事によって括弧の中の設定に変更できます
+" 上記のように書かれている場合、以下のようにvimrcに書くことによって設定が変更できます
 " set noignorecase
 "
 " 参考:
 "   :help tutor
 "   :help vimrc
-"   :VIMTUTOR / :TUTORIAL
+"   :vimtutor / :TUTORIAL
 "   :help index.html
+"   :help usr_02
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " これは必須 {{{1
 
-" add all folder under the $vim/plugins to rtp
-for s:path in split(glob($VIM.'/plugins/*'), '\n')
-  if s:path !~# '\~$' && isdirectory(s:path)
-    let &runtimepath = &runtimepath.','.s:path
-  end
-endfor
-unlet s:path
+if has('kaoriya') && has('vim_starting')
+  " add all folder under the $vim/plugins to rtp
+  for s:path in split(glob($VIM.'/plugins/*'), '\n')
+    if s:path !~# '\~$' && isdirectory(s:path)
+      let &runtimepath = &runtimepath.','.s:path
+    end
+  endfor
+  unlet s:path
 
-" fix for windows
-" don't add $vim not yet can't read exe files on windows
-if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
-  let $PATH = $VIM . ';' . $PATH
-endif
+  " fix for windows
+  " don't add $vim not yet can't read exe files on windows
+  if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
+    let $PATH = $VIM . ';' . $PATH
+  endif
 
-if has('kaoriya')
   " vimproc: disable vimproc included with KaoriYa
   if kaoriya#switch#enabled('disable-vimproc')
     let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]vimproc$"'), ',')
@@ -98,7 +100,7 @@ let g:plugin_cmdex_disable = 1
 
 " correspond auto wrap word in Japanese
 set formatoptions+=mM
-" Setting for Os which recognize upper/lower file name same
+" Setting for os which recognize upper/lower file name same
 "
 if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMRC')
   " prevent tag file dupricate
@@ -116,25 +118,7 @@ if !has('gui_running') && has('xterm_clipboard')
   set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
 
-" :Transform
-command! -nargs=* -range Transform <line1>,<line2>call Transform(<f-args>)
-function! Transform(from_str, to_str, ...)
-  if a:0 | let string = a:1 | else | let string = getline(".") | endif
-  let from_ptr = 0 | let to_ptr = 0
-  while 1
-    let from_char = matchstr(a:from_str, '^.', from_ptr)
-    if from_char == ''
-      break
-    endif
-    let to_char = matchstr(a:to_str, '^.', to_ptr)
-    let from_ptr = from_ptr + strlen(from_char)
-    let to_ptr = to_ptr + strlen(to_char)
-    let string = substitute(string, from_char, to_char, 'g')
-  endwhile
-  if a:0 | return string | else | call setline(".", string) | endif
-endfunction
-
-"---------------------------------------------------------------------------
+"===========================================================================
 " 検索の挙動に関する設定: {{{1
 "
 " 検索時に大文字小文字を無視 (noignorecase:無視しない)
@@ -148,8 +132,8 @@ set hlsearch
 " インクリメンタルサーチ (noincsearch:インクリメンタルしない)
 set incsearch
 
-"---------------------------------------------------------------------------
-" 編集に関する設定: {{2
+"===========================================================================
+" ファイル編集に関する設定: {{1
 
 " タブの画面上での幅
 set tabstop=8
@@ -193,7 +177,7 @@ set autoread
 " れるのでウイルス等はない
 set modeline
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " guiの場合の設定: {{{1
 
 if has('gui')
@@ -239,7 +223,7 @@ if has('gui')
     set guifontset=a14,r14,k14
   endif
 
-  "---------------------------------------------------------------------------
+  "===========================================================================
   " guiじゃない場合の設定: {{{1
 else
 
@@ -249,7 +233,7 @@ else
 
 endif
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " GUI固有ではない画面表示の設定: {{{1
 "
 " 行番号を表示 (nonumber:非表示)
@@ -282,7 +266,7 @@ set cmdheight=2
 " vsコマンド等でウィンドウを分割時に必ず右に開く (nospr/nosplitright:右に開かない(左に開く))
 set splitright
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " ファイル操作に関する設定: {{{1
 "
 " バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
@@ -305,7 +289,7 @@ if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
   set tags=./tags,tags
 endif
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " 日本語に関する設定: {{{1
 
 if has('multi_byte_ime') || has('xim')
@@ -315,7 +299,7 @@ if has('multi_byte_ime') || has('xim')
   set iminsert=0 imsearch=0
 endif
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " ステータスライン(下に表示されてる奴)の設定: {{{1
 
 " 左から
@@ -325,13 +309,14 @@ endif
 " + ファイルの名前
 " + \+マークが付いてる時は編集中のファイルに変更があって保存されてない
 " + ROは読み込み専用
-" + 右から現在のファイルの拡張子(Vimが内部で判定したもの、これによって設定とか色々自動で変えさせる事が可能)
+"  右から
+"   + 現在のファイルの拡張子(Vimが内部で判定したもの、これによって設定とか色々自動で変えさせる事が可能)
 " + 編集中のファイルの文字コード
 " + ファイルの改行コードがW(in)/U(nix)/M(ac)のどれか
 " + 最後に検索(置換)した文字列
 
-"---------------------------------------------------------------------------
-" declation of wafu: {{{2
+"=--------------------------------------------------------------------------
+" Declation of wafu: {{{2
 
 let s:wafun = '(>ω<)'
 " let s:wafun = '(>ω<)           '
@@ -360,7 +345,7 @@ while i < 6
 endwhile
 
 "---------------------------------------------------------------------------
-" functions: {{{2
+" Functions: {{{2
 
 "---------------------------------------------------------------------------
 " MyStl() abort: {{{3
@@ -550,7 +535,7 @@ func! s:stlupdate() abort
 endfunc
 
 "---------------------------------------------------------------------------
-" Commands {{{2
+" Commands: {{{2
 
 "---------------------------------------------------------------------------
 " :ShowError {{{3
@@ -565,7 +550,7 @@ command! -nargs=0 ShowError echo s:RetError()
 command! -nargs=0 GoError exe 'help' matchstr(s:RetError(),'\ME\d\+')
 
 "---------------------------------------------------------------------------
-" au: {{{2
+" Au: {{{2
 
 "---------------------------------------------------------------------------
 " StlAu {{{3
@@ -580,11 +565,11 @@ aug StlAu
 aug END
 
 "---------------------------------------------------------------------------
-" initialize {{{2
+" Initialize: {{{2
 
 call s:stlupdate()
 
-"---------------------------------------------------------------------------
+"===========================================================================
 " キーマップ: {{{1
 
 "---------------------------------------------------------------------------
@@ -651,10 +636,12 @@ vnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
 " windowsだとC-xに元から切り取りだか何だか糞なマップがされてるのでアンマップ: {{3
 " 選択した範囲に数の増減(<C-a>,<C-x>)をやると、連番に出来る
 
-try
-  vunmap <C-X>
-catch
-endtry
+if has('win32') || has('win64')
+  try
+    vunmap <C-X>
+  catch
+  endtry
+endif
 
 "---------------------------------------------------------------------------
 " スペース + o + j/k で下/上に空白行を追加(カウント可能) {{{3
@@ -663,8 +650,21 @@ nmap     <Space>o           [BlankLine]
 nnoremap <silent>           [BlankLine]j       :<C-u>for i in range(1, v:count1)<Bar>call append(line('.'),   '')<Bar>endfor<CR>
 nnoremap <silent>           [BlankLine]k       :<C-u>for i in range(1, v:count1)<Bar>call append(line('.')-1, '')<Bar>endfor<CR>
 
-"---------------------------------------------------------------------------
+" ターミナルでESCキーでノーマルモードにする {{{3
+if exists(":tmap")
+  if &termwinkey == ''
+    tnoremap <Esc> <C-w><S-n>
+  else
+    exe 'tnoremap <Esc> '.&termwinkey.'<S-n>'
+  endif
+endif
+
+"===========================================================================
 " practice for vim: {{{1
+
+"---------------------------------------------------------------------------
+" Mapping: {{{2
+" provide echo string mapping
 
 "---------------------------------------------------------------------------
 " s:rec(): {{{3
@@ -675,7 +675,6 @@ func! s:rec() abort
     call timer_stop(s:n)
   endif
   let s:n = timer_start(1000,function('<SID>wafun'),{'repeat':5})
-  " endfor
   return
 endfunc
 
@@ -728,9 +727,10 @@ func! s:dontusethiskey() abort
 endfunc
 
 "---------------------------------------------------------------------------
-" map: {{{2
+" Map: {{{3
 " この関数呼び出しによってマッピングを行なっている
 
 call s:dontusethiskey()
 
-" vim: set fdm=marker fmr={{{,}}} fdl=1 ts=8 sts=2 sw=2 tw=0 ft=vim :}}}
+"---------------------------------------------------------------------------
+" vim: set fdm=marker fmr={{{,}}} fdl=0 ts=8 sts=2 sw=2 tw=0 ft=vim :}}}
