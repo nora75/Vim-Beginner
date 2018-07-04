@@ -88,34 +88,35 @@ if has('kaoriya') && has('vim_starting')
   if kaoriya#switch#enabled('disable-go-extra')
     let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]golang$"'), ',')
   endif
-endif
 
-" Disable Screen Mode (kaoriya)
-let g:plugin_scrnmode_disable = 'yes'
+  " Disable Screen Mode (kaoriya)
+  let g:plugin_scrnmode_disable = 'yes'
 
-" kaoriya command disable
-let g:plugin_cmdex_disable = 1
+  " kaoriya command disable
+  let g:plugin_cmdex_disable = 1
 
-" for KaoriYa's plugins
+  " for KaoriYa's plugins
 
-" correspond auto wrap word in Japanese
-set formatoptions+=mM
-" Setting for os which recognize upper/lower file name same
-"
-if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMRC')
-  " prevent tag file dupricate
-  set tags=./tags,tags
-endif
+  " correspond auto wrap word in Japanese
+  set formatoptions+=mM
+  " Setting for os which recognize upper/lower file name same
+  "
+  if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMRC')
+    " prevent tag file dupricate
+    set tags=./tags,tags
+  endif
 
-try
-  " autofmt: format function that support Japanese
-  set formatexpr=autofmt#japanese#formatexpr()
-catch
-endtry
+  try
+    " autofmt: format function that support Japanese
+    set formatexpr=autofmt#japanese#formatexpr()
+  catch
+  endtry
 
-" correspond move slow when $display is set
-if !has('gui_running') && has('xterm_clipboard')
-  set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
+  " correspond move slow when $display is set
+  if !has('gui_running') && has('xterm_clipboard')
+    set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
+  endif
+
 endif
 
 "===========================================================================
