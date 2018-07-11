@@ -202,6 +202,16 @@ Provide my custom statusline.
 + current file's Line feed code (such as CR/LF but displayed W(in)/U(nix)/M(ac))
 + the last searched or substituted string
 
+# Customization
+
+## Disable Statusline
+
+You can disable Statusline by writing below script to your .vimrc
+
+```
+let g:Itimura_disableStl = 1
+```
+
 # Misc
 
 ## Maintainer

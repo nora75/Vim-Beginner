@@ -301,6 +301,169 @@ if has('multi_byte_ime') || has('xim')
 endif
 
 "===========================================================================
+" キーマップ: {{{1
+
+"---------------------------------------------------------------------------
+" 普通の奴ら: {{{2
+
+"---------------------------------------------------------------------------
+" ;と:の入れ変え: {{{3
+" コマンドラインモードでは無効
+
+nnoremap ;                  :<C-u>
+nnoremap :                  ;
+vnoremap ;                  :
+vnoremap :                  ;
+nnoremap q;                 q:
+nnoremap q:                 q;
+
+"---------------------------------------------------------------------------
+" 挿入モードの時に<ESC>で挿入モードを抜けた時に自動的にIMEをオフに: {{{3
+
+inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
+
+"---------------------------------------------------------------------------
+" ノーマルモードの時に<ESC><ESC>(<ESC>二回)で検索文字のハイライトを切り換え: {{{3
+
+nnoremap <silent> <Esc><Esc> :<C-u>set nohlsearch!<CR>
+
+"---------------------------------------------------------------------------
+" 移動系で好み別れる所、詳しくは:help gjかgjの上でK(<S-k>): {{{3
+
+nnoremap j                  gj
+nnoremap k                  gk
+nnoremap gj                 j
+nnoremap gk                 k
+
+"---------------------------------------------------------------------------
+" <C-p>,<C-S-p>で連続貼り付け可能に: {{{3
+" <C-p>はpと,<C-S-p>はP(<S-p>)と同様の動作
+
+nnoremap <silent> <C-p>     "0p
+nnoremap <silent> <C-S-p>   "0P
+vnoremap <silent> <C-p>   "0p
+vnoremap <silent> <C-S-p> "0P
+
+"---------------------------------------------------------------------------
+" <F1>で現在の.vimrcファイルの再読み込み: {{{3
+" vimの設定変更が反映される
+
+nnoremap <silent> <F1>               :<C-u>source $MYVIMRC<CR>
+vnoremap <silent> <F1>               :<C-u>source $MYVIMRC<CR>
+
+"---------------------------------------------------------------------------
+" <F5>で現在のファイルの再読み込み: {{{3
+
+nnoremap <silent> <F5>               :<C-u>silent! e!<CR>
+vnoremap <silent> <F5>               :<C-u>silent! e!<CR>
+
+"---------------------------------------------------------------------------
+" <F12>で.vimrcを新規タブで編集: {{{3
+
+nnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
+vnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
+
+"---------------------------------------------------------------------------
+" windowsだとC-xに元から切り取りだか何だか糞なマップがされてるのでアンマップ: {{3
+" 選択した範囲に数の増減(<C-a>,<C-x>)をやると、連番に出来る
+
+if has('win32') || has('win64')
+  try
+    vunmap <C-X>
+  catch
+  endtry
+endif
+
+"---------------------------------------------------------------------------
+" スペース + o + j/k で下/上に空白行を追加(カウント可能) {{{3
+
+nmap     <Space>o           [BlankLine]
+nnoremap <silent>           [BlankLine]j       :<C-u>for i in range(1, v:count1)<Bar>call append(line('.'),   '')<Bar>endfor<CR>
+nnoremap <silent>           [BlankLine]k       :<C-u>for i in range(1, v:count1)<Bar>call append(line('.')-1, '')<Bar>endfor<CR>
+
+" ターミナルでESCキーでノーマルモードにする {{{3
+if exists(":tmap")
+  if &termwinkey == ''
+    tnoremap <Esc> <C-w><S-n>
+  else
+    exe 'tnoremap <Esc> '.&termwinkey.'<S-n>'
+  endif
+endif
+
+"===========================================================================
+" practice for vim: {{{1
+
+"---------------------------------------------------------------------------
+" Mapping: {{{2
+" provide echo string mapping
+
+"---------------------------------------------------------------------------
+" s:rec(): {{{3
+" start timer and stop timer if already exists
+
+func! s:rec() abort
+  if exists('s:n')
+    call timer_stop(s:n)
+  endif
+  let s:n = timer_start(1000,function('<SID>wafun'),{'repeat':5})
+  return
+endfunc
+
+"---------------------------------------------------------------------------
+" s:wafun(...): {{{3
+" echo s:wafuw
+
+func! s:wafun(...) abort
+  echo s:wafun
+  let s:w = timer_start(400,function('<SID>wafuw'))
+  return
+endfunc
+
+"---------------------------------------------------------------------------
+" s:wafuw(...): {{{3
+" echo s:wafun and s:wafuw
+
+func! s:wafuw(...) abort
+  echo s:wafuw
+  return
+endfunc
+
+"---------------------------------------------------------------------------
+" s:mapkey(k): {{{3
+" map key of arg to s:rec()
+
+func! s:mapkey(k) abort
+  exe 'nnoremap <silent>' a:k ':<C-u>call <SID>rec()<CR>'
+  exe 'vnoremap <silent>' a:k ':<C-u>call <SID>rec()<CR>'
+  exe 'inoremap <silent>' a:k '<C-o>:<C-u>call <SID>rec()<CR>'
+  return
+endfunc
+
+"---------------------------------------------------------------------------
+" s:dontusethiskey(): {{{3
+" mapping by using s:mapkey()
+
+func! s:dontusethiskey() abort
+  call s:mapkey('<Left>')
+  call s:mapkey('<Down>')
+  call s:mapkey('<Up>')
+  call s:mapkey('<Right>')
+  call s:mapkey('<PageUp>')
+  call s:mapkey('<PageDown>')
+  call s:mapkey('<Home>')
+  call s:mapkey('<End>')
+  call s:mapkey('<Insert>')
+  call s:mapkey('<Del>')
+  return
+endfunc
+
+"---------------------------------------------------------------------------
+" Map: {{{3
+" この関数呼び出しによってマッピングを行なっている
+
+call s:dontusethiskey()
+
+"===========================================================================
 " ステータスライン(下に表示されてる奴)の設定: {{{1
 
 " 左から
@@ -316,7 +479,14 @@ endif
 " + ファイルの改行コードがW(in)/U(nix)/M(ac)のどれか
 " + 最後に検索(置換)した文字列
 
-"=--------------------------------------------------------------------------
+"---------------------------------------------------------------------------
+" 変数 g:Itimura_disableStl が存在する場合は、ステータスラインを設定しない
+
+if !exists('g:Itimura_disableStl')
+  finish
+endif
+
+"---------------------------------------------------------------------------
 " Declation of wafu: {{{2
 
 let s:wafun = '(>ω<)'
@@ -571,167 +741,4 @@ aug END
 call s:stlupdate()
 
 "===========================================================================
-" キーマップ: {{{1
-
-"---------------------------------------------------------------------------
-" 普通の奴ら: {{{2
-
-"---------------------------------------------------------------------------
-" ;と:の入れ変え: {{{3
-" コマンドラインモードでは無効
-
-nnoremap ;                  :<C-u>
-nnoremap :                  ;
-vnoremap ;                  :
-vnoremap :                  ;
-nnoremap q;                 q:
-nnoremap q:                 q;
-
-"---------------------------------------------------------------------------
-" 挿入モードの時に<ESC>で挿入モードを抜けた時に自動的にIMEをオフに: {{{3
-
-inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
-
-"---------------------------------------------------------------------------
-" ノーマルモードの時に<ESC><ESC>(<ESC>二回)で検索文字のハイライトを切り換え: {{{3
-
-nnoremap <silent> <Esc><Esc> :<C-u>set nohlsearch!<CR>
-
-"---------------------------------------------------------------------------
-" 移動系で好み別れる所、詳しくは:help gjかgjの上でK(<S-k>): {{{3
-
-nnoremap j                  gj
-nnoremap k                  gk
-nnoremap gj                 j
-nnoremap gk                 k
-
-"---------------------------------------------------------------------------
-" <C-p>,<C-S-p>で連続貼り付け可能に: {{{3
-" <C-p>はpと,<C-S-p>はP(<S-p>)と同様の動作
-
-nnoremap <silent> <C-p>     "0p
-nnoremap <silent> <C-S-p>   "0P
-vnoremap <silent> <C-p>   "0p
-vnoremap <silent> <C-S-p> "0P
-
-"---------------------------------------------------------------------------
-" <F1>で現在の.vimrcファイルの再読み込み: {{{3
-" vimの設定変更が反映される
-
-nnoremap <silent> <F1>               :<C-u>source $MYVIMRC<CR>
-vnoremap <silent> <F1>               :<C-u>source $MYVIMRC<CR>
-
-"---------------------------------------------------------------------------
-" <F5>で現在のファイルの再読み込み: {{{3
-
-nnoremap <silent> <F5>               :<C-u>silent! e!<CR>
-vnoremap <silent> <F5>               :<C-u>silent! e!<CR>
-
-"---------------------------------------------------------------------------
-" <F12>で.vimrcを新規タブで編集: {{{3
-
-nnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
-vnoremap <silent> <F12>               :<C-u>tabe $MYVIMRC<CR>
-
-"---------------------------------------------------------------------------
-" windowsだとC-xに元から切り取りだか何だか糞なマップがされてるのでアンマップ: {{3
-" 選択した範囲に数の増減(<C-a>,<C-x>)をやると、連番に出来る
-
-if has('win32') || has('win64')
-  try
-    vunmap <C-X>
-  catch
-  endtry
-endif
-
-"---------------------------------------------------------------------------
-" スペース + o + j/k で下/上に空白行を追加(カウント可能) {{{3
-
-nmap     <Space>o           [BlankLine]
-nnoremap <silent>           [BlankLine]j       :<C-u>for i in range(1, v:count1)<Bar>call append(line('.'),   '')<Bar>endfor<CR>
-nnoremap <silent>           [BlankLine]k       :<C-u>for i in range(1, v:count1)<Bar>call append(line('.')-1, '')<Bar>endfor<CR>
-
-" ターミナルでESCキーでノーマルモードにする {{{3
-if exists(":tmap")
-  if &termwinkey == ''
-    tnoremap <Esc> <C-w><S-n>
-  else
-    exe 'tnoremap <Esc> '.&termwinkey.'<S-n>'
-  endif
-endif
-
-"===========================================================================
-" practice for vim: {{{1
-
-"---------------------------------------------------------------------------
-" Mapping: {{{2
-" provide echo string mapping
-
-"---------------------------------------------------------------------------
-" s:rec(): {{{3
-" start timer and stop timer if already exists
-
-func! s:rec() abort
-  if exists('s:n')
-    call timer_stop(s:n)
-  endif
-  let s:n = timer_start(1000,function('<SID>wafun'),{'repeat':5})
-  return
-endfunc
-
-"---------------------------------------------------------------------------
-" s:wafun(...): {{{3
-" echo s:wafuw
-
-func! s:wafun(...) abort
-  echo s:wafun
-  let s:w = timer_start(400,function('<SID>wafuw'))
-  return
-endfunc
-
-"---------------------------------------------------------------------------
-" s:wafuw(...): {{{3
-" echo s:wafun and s:wafuw
-
-func! s:wafuw(...) abort
-  echo s:wafuw
-  return
-endfunc
-
-"---------------------------------------------------------------------------
-" s:mapkey(k): {{{3
-" map key of arg to s:rec()
-
-func! s:mapkey(k) abort
-  exe 'nnoremap <silent>' a:k ':<C-u>call <SID>rec()<CR>'
-  exe 'vnoremap <silent>' a:k ':<C-u>call <SID>rec()<CR>'
-  exe 'inoremap <silent>' a:k '<C-o>:<C-u>call <SID>rec()<CR>'
-  return
-endfunc
-
-"---------------------------------------------------------------------------
-" s:dontusethiskey(): {{{3
-" mapping by using s:mapkey()
-
-func! s:dontusethiskey() abort
-  call s:mapkey('<Left>')
-  call s:mapkey('<Down>')
-  call s:mapkey('<Up>')
-  call s:mapkey('<Right>')
-  call s:mapkey('<PageUp>')
-  call s:mapkey('<PageDown>')
-  call s:mapkey('<Home>')
-  call s:mapkey('<End>')
-  call s:mapkey('<Insert>')
-  call s:mapkey('<Del>')
-  return
-endfunc
-
-"---------------------------------------------------------------------------
-" Map: {{{3
-" この関数呼び出しによってマッピングを行なっている
-
-call s:dontusethiskey()
-
-"---------------------------------------------------------------------------
 " vim: set fdm=marker fmr={{{,}}} fdl=0 ts=8 sts=2 sw=2 tw=0 ft=vim :}}}
