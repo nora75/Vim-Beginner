@@ -341,8 +341,8 @@ nnoremap gk                 k
 
 nnoremap <silent> <C-p>     "0p
 nnoremap <silent> <C-S-p>   "0P
-vnoremap <silent> <C-p>   "0p
-vnoremap <silent> <C-S-p> "0P
+vnoremap <silent> <C-p>     "0p
+vnoremap <silent> <C-S-p>   "0P
 
 "---------------------------------------------------------------------------
 " <F1>で現在の.vimrcファイルの再読み込み: {{{3
@@ -469,7 +469,7 @@ call s:dontusethiskey()
 " 左から
 " + 現在のディレクトリ
 " + 現在編集してるファイルのディレクトリ
-" + (>ω<)わふーっ!
+" + (>ω<)わふーっ!、むぎゅ?
 " + ファイルの名前
 " + \+マークが付いてる時は編集中のファイルに変更があって保存されてない
 " + ROは読み込み専用
@@ -480,40 +480,62 @@ call s:dontusethiskey()
 " + 最後に検索(置換)した文字列
 
 "---------------------------------------------------------------------------
-" 変数 g:Itimura_disableStl が存在する場合は、ステータスラインを設定しない
+" 変数 g:Itimura_disableStl が存在する場合は、ステータスラインを設定しない: {{{2
 
-if !exists('g:Itimura_disableStl')
+if exists('g:Itimura_disableStl')
   finish
 endif
 
 "---------------------------------------------------------------------------
-" Declation of wafu: {{{2
+" Declation of wafu and mugyu: {{{2
 
-let s:wafun = '(>ω<)'
-" let s:wafun = '(>ω<)           '
-let s:wafuw = '(>ω<)/ わふーっ!'
-let s:wafuel = '(>ω<) わふーっ! しすてむ・えらーですーっ!'
-let s:wafues = '(>ω<) えらーですーっ!'
-" let s:wafun = '(>ω<)                                   '
-" let s:wafuw = '(>ω<)/わふーっ!                        '
-" let s:wafue = '(>ω<)わふーっ! しすてむ・えらーですーっ!'
-let s:wafustr = []
-let s:wafuerrlong = []
-let s:wafuerrshort = []
-let i = 0
-while i < 6
-  call add(s:wafustr,s:wafun)
-  call add(s:wafuerrshort,s:wafun)
-  call add(s:wafuerrlong,s:wafun)
-  let i += 1
-endwhile
-let i = 0
-while i < 6
-  call add(s:wafustr,s:wafuw)
-  call add(s:wafuerrshort,s:wafues)
-  call add(s:wafuerrlong,s:wafuel)
-  let i += 1
-endwhile
+let s:echostr = []
+let s:echoerrlong = []
+let s:echoerrshort = []
+
+if !exists('g:Itimura_disableWafu')
+  let s:wafun = '(>ω<)'
+  let s:wafuw = '(>ω<)/ わふーっ!'
+  let s:wafuel = '(>ω<) わふーっ! しすてむ・えらーですーっ!'
+  let s:wafues = '(>ω<) えらーですーっ!'
+
+  let i = 0
+  while i < 6
+    call add(s:echostr,s:wafun)
+    call add(s:echoerrshort,s:wafun)
+    call add(s:echoerrlong,s:wafun)
+    let i += 1
+  endwhile
+  let i = 0
+  while i < 6
+    call add(s:echostr,s:wafuw)
+    call add(s:echoerrshort,s:wafues)
+    call add(s:echoerrlong,s:wafuel)
+    let i += 1
+  endwhile
+endif
+
+if !exists('g:Itimura_disableMugyu')
+  let s:mugyun = 'むぎゅ～～～♪'
+  let s:mugyuw = 'むぎゅーーー!'
+  let s:mugyuel = 'むぎぃぃぃぃ...むぎぎぃぃーーーー'
+  let s:mugyues = 'むぎゅ?'
+
+  let i = 0
+  while i < 6
+    call add(s:echostr,s:mugyun)
+    call add(s:echoerrshort,s:mugyun)
+    call add(s:echoerrlong,s:mugyun)
+    let i += 1
+  endwhile
+  let i = 0
+  while i < 6
+    call add(s:echostr,s:mugyuw)
+    call add(s:echoerrshort,s:mugyues)
+    call add(s:echoerrlong,s:mugyuel)
+    let i += 1
+  endwhile
+endif
 
 "---------------------------------------------------------------------------
 " Functions: {{{2
@@ -523,17 +545,20 @@ endwhile
 " function of setting statusline value
 " number name variable is separator (colorscheme or alignment)
 
-func! s:stl(active) abort
+func! s:stl(active,...) abort
   call s:col()
   let first = ''
   let cfd = StlCurFileDir()
   let cwd = ''
-  let waf = ''
+  let ech = ''
   let second = ' %#StlLeft1# %f '
   if !a:active
     let cwd = StlCwd()
-    let waf = ' | '.StlWafu()
+    let ech = ' | '.StlEch()
     let first = '%#StlLeft0# '
+  endif
+  if a:0
+    let ech = ''
   endif
   let mo = s:mod()
   let ro = s:ro()
@@ -542,7 +567,7 @@ func! s:stl(active) abort
   let ff = '%{(&ft!="help")?''| ''.toupper(strcharpart(&ff,-1,2)).'' '':""}'
   let fenc = ' '.StlFenc().' '
   let ft =  '%{"| ".&ft." "}'
-  return first.cwd.cfd.waf.second.mo.ro.third.ff.forth.fenc.ft
+  return first.cwd.cfd.ech.second.mo.ro.third.ff.forth.fenc.ft
 endfunc
 
 "---------------------------------------------------------------------------
@@ -613,34 +638,34 @@ func! StlCurFileDir() abort
 endfun
 
 "---------------------------------------------------------------------------
-" StlWafu() abort: {{{3
-" function of wafu
-" return some variation of wafu
+" StlEch() abort: {{{3
+" function of wafu and mugyu
+" return some variation of wafu or mugyu
 
-function! StlWafu()
-  let wafuenc = get(s:, 'wafuenc', &encoding)
-  if wafuenc != &encoding
-    let s:wafustr = map(s:wafustr, 'iconv(v:val,s:wafuenc,&encoding)')
-    let s:wafuerrlong = map(s:wafuerrlong, 'iconv(v:val,s:wafuenc,&encoding)')
+function! StlEch()
+  let echoenc = get(s:, 'echoenc', &encoding)
+  if echoenc != &encoding
+    let s:echostr = map(s:echostr, 'iconv(v:val,s:echoenc,&encoding)')
+    let s:echoerrlong = map(s:echoerrlong, 'iconv(v:val,s:echoenc,&encoding)')
   endif
-  let s:wafuenc = &encoding
-  let wafupos = get(w:, 'wafupos', -1) + 1
-  if len(v:errmsg) && wafupos >= 0
-    let wafupos = -24
+  let s:echoenc = &encoding
+  let echopos = get(w:, 'echopos', -1) + 1
+  if len(v:errmsg) && echopos >= 0
+    let echopos = -24
     let s:lasterrormsg = v:errmsg
     let v:errmsg = ''
   endif
-  if wafupos >= 0
-    let wafupos = wafupos % len(s:wafustr)
+  if echopos >= 0
+    let echopos = echopos % len(s:echostr)
   endif
-  let w:['wafupos'] = wafupos
-  if wafupos >= 0
-    return s:wafustr[wafupos]
+  let w:['echopos'] = echopos
+  if echopos >= 0
+    return s:echostr[echopos]
   else
     if winwidth('') >= 100
-      return s:wafuerrlong[(wafupos+24) % len(s:wafuerrlong)].' '.matchstr(get(s:, 'lasterrormsg', ''),'^E\d\+')
+      return s:echoerrlong[(echopos+24) % len(s:echoerrlong)].' '.matchstr(get(s:, 'lasterrormsg', ''),'^E\d\+')
     else
-      return s:wafuerrshort[(wafupos+24) % len(s:wafuerrshort)].' '.matchstr(get(s:, 'lasterrormsg', ''),'^E\d\+')
+      return s:echoerrshort[(echopos+24) % len(s:echoerrshort)].' '.matchstr(get(s:, 'lasterrormsg', ''),'^E\d\+')
     endif
   endif
 endfunction
@@ -697,14 +722,23 @@ endfunc
 " s:stlupdate() abort: {{{3
 " update stl in all window
 
-func! s:stlupdate() abort
-  let w = winnr()
-  let s = winnr('$') == 1 ? [s:stl(0)] : [s:stl(0), s:stl(1)]
-  for n in range(1, winnr('$'))
-    call setwinvar(n, '&statusline', s[n!=w])
-  endfor
-endfunc
-
+if exists('g:Itimura_disableEcho')
+  func! s:stlupdate() abort
+    let w = winnr()
+    let s = winnr('$') == 1 ? [s:stl(0,0)] : [s:stl(0,0), s:stl(1,0)]
+    for n in range(1, winnr('$'))
+      call setwinvar(n, '&statusline', s[n!=w])
+    endfor
+  endfunc
+else
+  func! s:stlupdate() abort
+    let w = winnr()
+    let s = winnr('$') == 1 ? [s:stl(0)] : [s:stl(0), s:stl(1)]
+    for n in range(1, winnr('$'))
+      call setwinvar(n, '&statusline', s[n!=w])
+    endfor
+  endfunc
+endif
 "---------------------------------------------------------------------------
 " Commands: {{{2
 

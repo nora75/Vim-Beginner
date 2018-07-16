@@ -212,6 +212,46 @@ You can disable Statusline by writing below script to your .vimrc
 let g:Itimura_disableStl = 1
 ```
 
+## Disable echo Anime String
+
+You can disable echo anime string in Statusline by writing below script to your .vimrc
+
+The anime string is such as '(>ω<)わふーっ！' and 'むぎゅ'.
+
+```
+let g:Itimura_disableEcho = 1
+```
+
+## Disable echo a part of Anime String
+
+You can disable echo a part of anime string in Statusline by writing below script to your .vimrc
+
+### Disable echo like '(>ω<)わふーっ！'
+
+Disable echo these.
+
++ '(>ω<)'
++ '(>ω<)/ わふーっ!'
++ '(>ω<) わふーっ! しすてむ・えらーですーっ!'
++ '(>ω<) えらーですーっ!'
+
+```
+let g:Itimura_disableWafu = 1
+```
+
+### Disable echo like 'むぎゅ'
+
+Disable echo these.
+
++ 'むぎゅ'
++ 'むぎゅーーーー'
++ 'むぎぃぃぃぃ...むぎぎぃぃーーーー'
++ 'むぎゅ?'
+
+```
+let g:Itimura_disableMugyu = 1
+```
+
 # Misc
 
 ## Maintainer
