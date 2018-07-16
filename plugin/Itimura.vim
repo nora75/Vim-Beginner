@@ -209,8 +209,6 @@ if has('gui')
   augroup END
 
   syntax enable
-  " 背景黒にしたいならアンコメント
-  " set background=dark
 
   " change to if statement
   if has('win32')
@@ -229,9 +227,6 @@ if has('gui')
 else
 
   syntax on
-  " 背景黒にしたいならアンコメント
-  " set background=dark
-
 endif
 
 "===========================================================================
