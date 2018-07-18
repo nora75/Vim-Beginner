@@ -127,7 +127,7 @@ if has('kaoriya') && has('vim_starting')
     if exists('g:Itimura_transparentActive')
       let s:transac = g:Itimura_transparentActive
     else
-      let s:transac = 50
+      let s:transac = 150
     endif
     if exists('g:Itimura_transparentInactive')
       let s:transinac = g:Itimura_transparentInactive
