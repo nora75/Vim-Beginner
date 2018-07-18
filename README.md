@@ -252,6 +252,28 @@ Disable echo these.
 let g:Itimura_disableMugyu = 1
 ```
 
+### Enable background transparency in gvim on kaoriya
+
+```
+let g:Itimura_enableTransparent = 1
+```
+
+#### You can also customize transparent .
+
+You can specify transparent value by these variables.
+
+This variable is used when vim is active.
+
+```
+let g:Itimura_transparentActive = 1
+```
+
+This variable is used when vim is inactive.
+
+```
+let g:Itimura_transparentInactive = 1
+```
+
 # Misc
 
 ## Maintainer

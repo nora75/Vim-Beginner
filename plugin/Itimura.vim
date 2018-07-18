@@ -122,6 +122,25 @@ if has('kaoriya') && has('vim_starting')
     set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
   endif
 
+  if has('gui') && exists('g:Itimura_enableTransparent')
+    set ambiwidth=auto
+    if exists('g:Itimura_transparentActive')
+      let s:transac = g:Itimura_transparentActive
+    else
+      let s:transac = 50
+    endif
+    if exists('g:Itimura_transparentInactive')
+      let s:transinac = g:Itimura_transparentInactive
+    else
+      let s:transinac = 50
+    endif
+    aug kaogui
+      au!
+      exe 'autocmd GuiEnter * set transparency='.s:transac
+      exe 'autocmd FocusGained * if &transparency < '.s:transac.'|set transparency='.s:transac.'|endif'
+      exe 'autocmd FocusLost * if &transparency > '.s:transinac.'|set transparency='.s:transinac.'|endif'
+    aug END
+  endif
 endif
 
 "===========================================================================
