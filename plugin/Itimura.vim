@@ -11,7 +11,7 @@ scriptencoding utf-8
 " 日本語版の設定ファイル(vimrc) for Vim 8.1 {{{1
 "
 " Description: Provide many settings for vim beginner only support vim 8.1
-" Last Change: 03-Jul-2018.
+" Last Change: 23-Jul-2018.
 " Maintainer:  NORA75
 " Licence: MIT
 "
@@ -501,9 +501,7 @@ call s:dontusethiskey()
 "---------------------------------------------------------------------------
 " 変数 g:Itimura_disableStl が存在する場合は、ステータスラインを設定しない: {{{2
 
-if exists('g:Itimura_disableStl')
-  finish
-endif
+if !exists('g:Itimura_disableStl')
 
 "---------------------------------------------------------------------------
 " Declation of wafu and mugyu: {{{2
@@ -792,6 +790,170 @@ aug END
 " Initialize: {{{2
 
 call s:stlupdate()
+
+endif
+
+"===========================================================================
+" Pdf 自動変換及び読み込み : {{{1
+
+if exists('g:Itimura_enablePdf')
+
+"---------------------------------------------------------------------------
+  " variables {{{2
+  " declation of tempname
+  let s:tmpn = { 'count' : '1' }
+
+"---------------------------------------------------------------------------
+  " functions {{{2
+
+"---------------------------------------------------------------------------
+  " s:lock() abort {{{3
+  " lock current tmp file
+  func! s:lock(co) abort
+    exe 'let s:tmpn.file'.a:co.'.lock = v:true'
+    let s:tmpn.last = a:co
+    return
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:checklock() abort {{{3
+  " check are all tmp file locked
+  func! s:checklock() abort
+    let i = 1
+    let flag = v:false
+    while (i < s:tmpn.count)
+      if get(eval('s:tmpn.file'.i),'lock') == v:false
+        break
+      endif
+      let i += 1
+    endwhile
+    return i
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:unlock(co) abort {{{3
+  " unlock current tmp file
+  func! s:unlock(co) abort
+    %d_
+    exe 'let s:tmpn.file'.a:co.'.lock = v:false'
+    return
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:gettmpn() abort {{{3
+  " get tmp name from s:tmpn
+  func! s:gettmpn() abort
+    let co = s:checklock()
+    if co == s:tmpn.count
+      call s:mktmp()
+    endif
+    let ret = get(eval('s:tmpn.file'.co),'name')
+    call s:lock(co)
+    return [ret,co]
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:getlast() abort {{{3
+  " get last locked s:tmpn
+  func! s:getlast() abort
+    let tmpn = s:tmpn.ls
+    return tmpn
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:mktmp() abort {{{3
+  " make new tmp file and lock it
+  func! s:mktmp() abort
+    exe 'let s:tmpn.file'.get(s:tmpn,'count') '= {}'
+    exe 'let s:tmpn.file'.get(s:tmpn,'count').'.name'.' = tempname()'
+    let s:tmpn.count += 1
+    return
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:delalltmp() abort {{{3
+  " delete all maked tmp file
+  func! s:delalltmp() abort
+    let i = 0
+    while i < s:tmpn.count
+      silent! call delete(get(eval('s:tmpn.file'.i),'name'))
+    endwhile
+    return
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:Pdftxt() {{{3
+  " exe au BufreadPost *.pdf
+  " optional argument is used when execute file needs output file earier than
+  " input in argument and optional command only must use in the execute file
+  func! s:Pdftxt() abort
+    let input = shellescape(expand('%:p'))
+    " if v:true
+    " endif
+    let [tmpn,co] = s:gettmpn()
+    let tmpns = shellescape(tmpn)
+    if executable('pdftotext')
+      let vexe = 'pdftotext -nopgbrk -enc UTF-8 -eol unix -q '.input.' '.tmpns
+    elseif executable('mutool')
+      let vexe = 'mutool draw -F txt -o '.tmpns.' '.input
+    else
+      echohl WarningMsg
+      echo "Vim can't convert pdf to text.Because You don't have pdftotext or mutool"
+      echohl NONE
+      return -1
+    endif
+    echo 'wait until convert complete'
+    exe 'silent call string(system('.string(vexe).'))'
+    try
+      exe 'silent e' tmpn
+    catch
+      return -1
+    endtry
+    return co
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:au(co,...) {{{3
+  " declare autocmd in current buffer
+  func! s:au(co,...) abort
+    if a:co == -1
+      return
+    endif
+    silent! exe 'g//d_'
+    if getline(1,line('$')) ==# ['']
+      echohl WarningMsg
+      echo "Vim can't convert pdf to text.Because this file's format isn't support"
+      echohl NONE
+    else
+      %center
+      silent 1
+      setl bt=nofile noswf nobl bh=wipe ft=pdf
+      exe 'au BufWipeOut <buffer> call <SID>unlock('.a:co.')'
+    endif
+    return
+  endfunc
+
+"---------------------------------------------------------------------------
+  " s:rec() {{{3
+  " set timer and make calling function only once by autocommand
+  func! s:rec() abort
+    if exists('s:n')
+      return
+    endif
+    let s:n = timer_start(1000,function('<SID>au',[s:Pdftxt()]))
+    return
+  endfunc
+
+"---------------------------------------------------------------------------
+  " au groups {{{2
+
+"---------------------------------------------------------------------------
+  aug ItimuraPdf " {{{3
+    au!
+    au FileType pdf call s:rec()
+    au VimLeavePre call s:delalltmp()
+  aug END
+endif
 
 "===========================================================================
 " vim: set fdm=marker fmr={{{,}}} fdl=0 ts=8 sts=2 sw=2 tw=0 ft=vim :}}}
