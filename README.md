@@ -258,7 +258,7 @@ let g:Itimura_disableMugyu = 1
 let g:Itimura_enableTransparent = 1
 ```
 
-### You can also customize transparent .
+### You can also customize transparent value
 
 You can specify transparent value by these variables.
 
@@ -276,7 +276,8 @@ let g:Itimura_transparentInactive = 1
 
 ## Enable auto convert pdf file to txt
 
-You can enable this feature by setting this variable.
+You can enable this feature by setting this variable.  
+You need install pdftotxt or mutool.  
 
 ```
 let g:Itimura_enablePdf = 1
