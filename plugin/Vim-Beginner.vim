@@ -122,15 +122,15 @@ if has('kaoriya') && has('vim_starting')
     set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
   endif
 
-  if has('gui') && exists('g:Itimura_enableTransparent')
+  if has('gui') && exists('g:Vim_Beginner_enableTransparent')
     set ambiwidth=auto
-    if exists('g:Itimura_transparentActive')
-      let s:transac = g:Itimura_transparentActive
+    if exists('g:Vim_Beginner_transparentActive')
+      let s:transac = g:Vim_Beginner_transparentActive
     else
       let s:transac = 150
     endif
-    if exists('g:Itimura_transparentInactive')
-      let s:transinac = g:Itimura_transparentInactive
+    if exists('g:Vim_Beginner_transparentInactive')
+      let s:transinac = g:Vim_Beginner_transparentInactive
     else
       let s:transinac = 50
     endif
@@ -499,9 +499,9 @@ call s:dontusethiskey()
 " + 最後に検索(置換)した文字列
 
 "---------------------------------------------------------------------------
-" 変数 g:Itimura_disableStl が存在する場合は、ステータスラインを設定しない: {{{2
+" 変数 g:Vim_Beginner_disableStl が存在する場合は、ステータスラインを設定しない: {{{2
 
-if !exists('g:Itimura_disableStl')
+if !exists('g:Vim_Beginner_disableStl')
 
 "---------------------------------------------------------------------------
 " Declation of wafu and mugyu: {{{2
@@ -510,7 +510,7 @@ let s:echostr = []
 let s:echoerrlong = []
 let s:echoerrshort = []
 
-if !exists('g:Itimura_disableWafu')
+if !exists('g:Vim_Beginner_disableWafu')
   let s:wafun = '(>ω<)'
   let s:wafuw = '(>ω<)/ わふーっ!'
   let s:wafuel = '(>ω<) わふーっ! しすてむ・えらーですーっ!'
@@ -532,7 +532,7 @@ if !exists('g:Itimura_disableWafu')
   endwhile
 endif
 
-if !exists('g:Itimura_disableMugyu')
+if !exists('g:Vim_Beginner_disableMugyu')
   let s:mugyun = 'むぎゅ～～～♪'
   let s:mugyuw = 'むぎゅーーー!'
   let s:mugyuel = 'むぎぃぃぃぃ...むぎぎぃぃーーーー'
@@ -739,7 +739,7 @@ endfunc
 " s:stlupdate() abort: {{{3
 " update stl in all window
 
-if exists('g:Itimura_disableEcho')
+if exists('g:Vim_Beginner_disableEcho')
   func! s:stlupdate() abort
     let w = winnr()
     let s = winnr('$') == 1 ? [s:stl(0,0)] : [s:stl(0,0), s:stl(1,0)]
@@ -796,7 +796,7 @@ endif
 "===========================================================================
 " Pdf 自動変換及び読み込み : {{{1
 
-if exists('g:Itimura_enablePdf')
+if exists('g:Vim_Beginner_enablePdf')
 
 "---------------------------------------------------------------------------
   " variables {{{2
@@ -948,7 +948,7 @@ if exists('g:Itimura_enablePdf')
   " au groups {{{2
 
 "---------------------------------------------------------------------------
-  aug ItimuraPdf " {{{3
+  aug Vim_BeginnerPdf " {{{3
     au!
     au FileType pdf call s:rec()
     au VimLeavePre call s:delalltmp()
