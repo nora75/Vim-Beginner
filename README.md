@@ -13,13 +13,13 @@ This file has commentary of setting but written in Japanese.
 #### dein.vim
 
 ```
-call dein#add('NORA75/Itimura')
+call dein#add('NORA75/Vim-Beginner')
 ```
 
 #### Neobundle.vim
 
 ```
-Neobundle 'NORA75/Itimura'
+Neobundle 'NORA75/Vim-Beginner'
 ```
 
 ### Second
@@ -209,7 +209,7 @@ Provide my custom statusline.
 You can disable Statusline by writing below script to your .vimrc
 
 ```
-let g:Itimura_disableStl = 1
+let g:Vim_Beginner_disableStl = 1
 ```
 
 ## Disable echo Anime String
@@ -219,7 +219,7 @@ You can disable echo anime string in Statusline by writing below script to your 
 The anime string is such as '(>ω<)わふーっ！' and 'むぎゅ'.
 
 ```
-let g:Itimura_disableEcho = 1
+let g:Vim_Beginner_disableEcho = 1
 ```
 
 ## Disable echo a part of Anime String
@@ -236,7 +236,7 @@ Disable echo these.
 + '(>ω<) えらーですーっ!'
 
 ```
-let g:Itimura_disableWafu = 1
+let g:Vim_Beginner_disableWafu = 1
 ```
 
 ### Disable echo like 'むぎゅ'
@@ -249,13 +249,13 @@ Disable echo these.
 + 'むぎゅ?'
 
 ```
-let g:Itimura_disableMugyu = 1
+let g:Vim_Beginner_disableMugyu = 1
 ```
 
 ## Enable background transparency in gvim on kaoriya
 
 ```
-let g:Itimura_enableTransparent = 1
+let g:Vim_Beginner_enableTransparent = 1
 ```
 
 ### You can also customize transparent value
@@ -265,13 +265,13 @@ You can specify transparent value by these variables.
 This variable is used when vim is active.
 
 ```
-let g:Itimura_transparentActive = 1
+let g:Vim_Beginner_transparentActive = 1
 ```
 
 This variable is used when vim is inactive.
 
 ```
-let g:Itimura_transparentInactive = 1
+let g:Vim_Beginner_transparentInactive = 1
 ```
 
 ## Enable auto convert pdf file to txt
@@ -280,7 +280,7 @@ You can enable this feature by setting this variable.
 You need install pdftotxt or mutool.  
 
 ```
-let g:Itimura_enablePdf = 1
+let g:Vim_Beginner_enablePdf = 1
 ```
 
 # Misc
