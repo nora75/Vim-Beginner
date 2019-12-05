@@ -53,7 +53,7 @@ endif
 
     + swap q; and q: too
 
-+ map \<Esc>\<Esc> (type <Esc> twice) to switch highlight on/off [normal]
++ map \<Esc>\<Esc> (type \<Esc> twice) to switch highlight on/off [normal]
 
 + swap all standard movment command and display lines downward [normal]
 
@@ -62,21 +62,21 @@ endif
 
 + repeatable put mapping [normal/visual]
 
-    + <C-p> put after cursor
-    + <C-S-p> put before cursor
+    + \<C-p> put after cursor
+    + \<C-S-p> put before cursor
 
-+ can reload current vimrc file [normal/visual]
++ map F1 to reload current vimrc file [normal/visual]
 
-+ map F1 ro reload current file [normal/visual]
++ map F5 to reload current file [normal/visual]
 
 + map F12 to edit vimrc file in new tab [normal/visual]
 
 + append blank lines mapping [normal]
 
     this mapping supports count.  
-    <Space>o and j/k.  
-    <Space>oj to append under current cursor line.  
-    <Space>ok to append above current cursor line.  
+    \<Space>o and j/k.  
+    \<Space>oj to append under current cursor line.  
+    \<Space>ok to append above current cursor line.  
 
 + \<Esc> to go to normal mode on terminal window [terminal]
 
@@ -292,4 +292,3 @@ NORA75
 ## LICENSE
 
 MIT
-
