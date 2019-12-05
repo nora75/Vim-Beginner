@@ -49,11 +49,11 @@ endif
 
 ## Mapping
 
-+ swap ; and [normal/visual]
++ swap ; and : [normal/visual]
 
     + swap q; and q: too
 
-+ map <Esc><Esc> (type <Esc> twice) to switch highlight on/off [normal]
++ map \<Esc>\<Esc> (type <Esc> twice) to switch highlight on/off [normal]
 
 + swap all standard movment command and display lines downward [normal]
 
@@ -65,11 +65,11 @@ endif
     + <C-p> put after cursor
     + <C-S-p> put before cursor
 
-+ reload current vimrc file [normal/visual]
++ can reload current vimrc file [normal/visual]
 
-+ reload current file [normal/visual]
++ map F1 ro reload current file [normal/visual]
 
-+ edit vimrc file in new tab [normal/visual]
++ map F12 to edit vimrc file in new tab [normal/visual]
 
 + append blank lines mapping [normal]
 
@@ -78,16 +78,16 @@ endif
     <Space>oj to append under current cursor line.  
     <Space>ok to append above current cursor line.  
 
-+ <Esc> to go to normal mode on terminal window [terminal]
++ \<Esc> to go to normal mode on terminal window [terminal]
 
     this command use &termwinkey.  
     Some versions do not work properly.  
 
-+ unmap default <C-x> mapping when you use windows
++ unmap default \<C-x> mapping when you use windows
 
 ### Mapping for Japanese
 
-+ type <Esc> to reset IME status [insert]
++ type \<Esc> to reset IME status [insert]
 
 ### Mapping for practice vim
 
@@ -95,16 +95,16 @@ These keys are disabled because I recommend not to use these keys.
 The string *(>ω<)わふーっ！* is echoed on your vim when you type these keys.  
 This string is Characters' lines.  
 
-+ <Left>
-+ <Down>
-+ <Up>
-+ <Right>
-+ <PageUp>
-+ <PageDown>
-+ <Home>
-+ <End>
-+ <Insert>
-+ <Del>
++ \<Left>
++ \<Down>
++ \<Up>
++ \<Right>
++ \<PageUp>
++ \<PageDown>
++ \<Home>
++ \<End>
++ \<Insert>
++ \<Del>
 
 ## Settings
 
